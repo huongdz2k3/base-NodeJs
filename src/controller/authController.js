@@ -43,7 +43,11 @@ exports.login = async (req, res) => {
             })
         }
         const user = await User.findOne({ email: email })
-        console.log(user)
+        if (!user.status) {
+            return res.status(404).json({
+                mess: "This account already deleted"
+            })
+        }
         let check = await bcrypt.compare(password, user.password)
         if (!check) {
             return res.status(404).json({
@@ -65,7 +69,7 @@ exports.protect = async (req, res, next) => {
     try {
         // Get token and check
         let token
-        if (req.headers.authorization && req.headers.authorization.startWith('Bearer')) {
+        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
             token = req.headers.authorization.split(' ')[1]
         }
         if (!token) {
@@ -84,6 +88,35 @@ exports.protect = async (req, res, next) => {
         }
         req.user = user
         next()
+    } catch (err) {
+        console.log(err)
+        res.status(400).json({
+            err
+        })
+    }
+}
+
+exports.updatePassword = async (req, res) => {
+    try {
+        // get Id
+        const id = req.user._conditions._id.id
+        const user = await User.findById(id)
+        // Compare old password
+        const check = bcrypt.compare(req.body.currentPass, user.password)
+        if (!check) {
+            return res.status(400).json({
+                status: "fail",
+                mess: "Invalid password"
+            })
+        }
+
+        // Update Pass
+        user.password = req.body.newPass
+        await user.save()
+        res.status(200).json({
+            status: "success",
+            mess: "update pass success"
+        })
     } catch (err) {
         console.log(err)
         res.status(400).json({
