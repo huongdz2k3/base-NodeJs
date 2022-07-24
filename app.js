@@ -6,6 +6,8 @@ const configViewEngine = require('./src/configs/Viewengine')
 // initialize router
 const userRoute = require('./src/router/userRoute')
 const petRoute = require('./src/router/petRoute')
+const orderRoute = require('./src/router/orderRoute')
+
 app.use(helmet()) // security
 app.use(morgan('dev'))
 
@@ -16,5 +18,6 @@ app.use(express.json())
 // configViewEngine(app)
 // Router hander
 app.use('/api/user', userRoute)
+app.use('/api/user', orderRoute)
 app.use('/api/pet', petRoute)
 module.exports = app

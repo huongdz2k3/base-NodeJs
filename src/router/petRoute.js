@@ -14,6 +14,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 route.route('/getAllPets').get(petController.getAllPets)
+route.route('/getStatus').get(petController.getStatus)
 // route.use(authController.protect)
 route.route('/createPet').post(petController.createPet)
 route.route('/:id').patch(petController.updatePet).delete(petController.deletePet).get(petController.getOnePet)

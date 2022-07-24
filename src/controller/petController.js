@@ -96,3 +96,27 @@ exports.getOnePet = async (req, res) => {
         })
     }
 }
+
+exports.getStatus = async (req, res) => {
+    try {
+        const pets = await Pet.find({ status: true })
+        const data = []
+        pets.forEach((el) => {
+            data.push({
+                id: el.id,
+                status: el.status
+            })
+        })
+        res.status(200).json({
+            status: 'success',
+            data: data,
+            mess: `${data.length} pets that are available`
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(400).json({
+            status: "fail",
+            mess: err
+        })
+    }
+}
